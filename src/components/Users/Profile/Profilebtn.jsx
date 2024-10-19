@@ -10,12 +10,11 @@ import { User, LogOut, MapPinHouse, Truck } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/use-toast";
 
-
 const Profilebtn = () => {
   const { toast } = useToast();
+
   const handleSignOut = async () => {
     try {
-
       await signOut({ redirect: false });
       toast({
         title: "Signed Out",
@@ -48,12 +47,13 @@ const Profilebtn = () => {
       url: "",
     },
   ];
+
   return (
-    <DropdownMenuContent className=" min-w-52">
+    <DropdownMenuContent className="min-w-52">
       <DropdownMenuLabel>My Account</DropdownMenuLabel>
       <DropdownMenuSeparator />
-      {menuData.map((data) => (
-        <Link href={data.url}>
+      {menuData.map((data, index) => (
+        <Link href={data.url} key={index}>
           <DropdownMenuItem>
             {data.icon}
             <span>{data.name}</span>
@@ -61,7 +61,7 @@ const Profilebtn = () => {
         </Link>
       ))}
       <DropdownMenuSeparator />
-      <DropdownMenuItem  onClick={() => handleSignOut()} >
+      <DropdownMenuItem onClick={handleSignOut}>
         <LogOut className="mr-2 h-4 w-4" />
         <span>Log out</span>
       </DropdownMenuItem>

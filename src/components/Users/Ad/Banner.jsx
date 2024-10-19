@@ -14,6 +14,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Image from "next/image";
 
 const AdBanner = () => {
   const images = {
@@ -36,7 +37,7 @@ const AdBanner = () => {
             <Carousel autoPlay>
               {images.specialOffer.map((src, index) => (
                 <CarouselContent key={index} className="">
-                  <img
+                  <Image
                     src={src}
                     alt={`Special Offer ${index + 1}`}
                     className="w-full  object-cover rounded-lg "
@@ -51,7 +52,7 @@ const AdBanner = () => {
             <Carousel autoPlay>
               {images.newArrivals.map((src, index) => (
                 <CarouselContent key={index} className="h-full">
-                  <img
+                  <Image
                     src={src}
                     alt={`New Arrival ${index + 1}`}
                     className="w-full  object-cover  rounded-lg"

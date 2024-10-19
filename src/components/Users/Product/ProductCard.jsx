@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShoppingCart, IndianRupee } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 // components/ProductCard.js
 export default function ProductCard({ product, isLoading }) {
@@ -35,7 +36,7 @@ export default function ProductCard({ product, isLoading }) {
   return (
     <Card className="bg-white rounded-xl shadow-lg w-64 ">
       <CardHeader className="p-3">
-        <img
+        <Image
           src={product.image}
           alt={product.name}
           className="w-full h-40 object-cover rounded-t-lg"
