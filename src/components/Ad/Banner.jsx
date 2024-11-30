@@ -19,7 +19,7 @@ const mainImages = [
 
 // Array for the left bottom carousel images
 const leftBottomImages = { src: "/test.png", alt: "Left Image 1" };
-// Array for the right bottom carousel images
+
 const rightBottomImages = { src: "/test.png", alt: "Right Image 1" };
 const Banner = () => {
   const mainAutoplay = useRef(
@@ -45,8 +45,8 @@ const Banner = () => {
               {mainImages.map((image, index) => (
                 <CarouselItem key={index}>
                   <div
-                    className="relative w-full"
-                    style={{ paddingBottom: "18.75%" }}
+                    className="relative w-full h-36 sm:h-72"
+                    
                   >
                     <Image
                       src={image.src}
@@ -67,7 +67,7 @@ const Banner = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {/* Left Bottom Carousel */}
 
-          <div className="relative w-full" style={{ paddingBottom: "18.75%" }}>
+          <div className="relative w-full h-32 sm:h-48" >
             <Image
               src={leftBottomImages.src}
               alt={leftBottomImages.alt}
@@ -78,7 +78,7 @@ const Banner = () => {
 
           {/* Right Bottom Carousel */}
 
-          <div className="relative w-full" style={{ paddingBottom: "18.75%" }}>
+          <div className="relative w-full h-32 sm:h-48">
             <Image
               src={rightBottomImages.src}
               alt={rightBottomImages.alt}
