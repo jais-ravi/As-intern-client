@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const userSchema = mongoose.Schema(
   {
@@ -9,23 +10,24 @@ const userSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: [true, "email is required"],
+      required: [true, "Email is required"],
       unique: true,
-      match: [/.+\@.+\..+/, "please use a valid email address"],
+      match: [/.+\@.+\..+/, "Please use a valid email address"],
     },
-    password: String,
+    password: {
+      type: String,
+      required: true,
+    },
     verifyCode: {
       type: String,
-      // required: [true, "Verify Code is required"],
     },
     isVerified: {
       type: Boolean,
       default: false,
     },
     verifyCodeExpiry: {
-      type: Date,
-      default: new Date(Date.now() + 10 * 60 * 1000).toUTCString(),
-      required: [true, "Verify Code Expiry is required"],
+      type: Date, // Store as a Date object
+      default: () => new Date(Date.now() + 10 * 60 * 1000), // Default 10 minutes from now
     },
     cart: {
       type: Array,
@@ -35,12 +37,26 @@ const userSchema = mongoose.Schema(
       type: Array,
       default: [],
     },
-    contact: Number,
-    picture: String,
+    contact: {
+      type: String, // Store as a string for better validation
+      match: [/^\d{10}$/, "Please provide a valid contact number"], // Example validation for 10-digit numbers
+    },
+    picture: {
+      type: String,
+    },
   },
-  { collection: "myusers" }
+  { collection: "myusers", timestamps: true } // Timestamps to track creation and updates
 );
+
+// Pre-save hook for password hashing
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  }
+  next();
+});
 
 const UserModel = mongoose.models.User || mongoose.model("User", userSchema);
 
-export default UserModel;
+module.exports = UserModel;
