@@ -3,15 +3,12 @@ import mongoose from "mongoose";
 
 export async function GET(req) {
   try {
-    // Ensure MongoDB connection is established
     await dbConnect();
-
-    // Define the schema for products (direct query without using a model)
     const products = await mongoose.connection.db
-      .collection("products")  // Access the 'products' collection directly
+      .collection("products")  
       .find({})
-      .limit(10)  // Fetch only the first 10 products
-      .toArray();  // Convert to array
+      .limit(10)  
+      .toArray(); 
 
     return new Response(JSON.stringify(products), {
       status: 200,

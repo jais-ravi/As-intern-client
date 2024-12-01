@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Navbar from "@/components/HeaderFooter/Navbar";
 import Footer from "@/components/HeaderFooter/Footer";
 import { Toaster } from "@/components/ui/toaster";
+import CatNav from "@/components/HeaderFooter/CatNav";
 
 export default function ClientLayout({ children }) {
   const pathname = usePathname();
@@ -13,6 +14,7 @@ export default function ClientLayout({ children }) {
   return (
     <>
       {showHeaderFooter && <Navbar />}
+      {showHeaderFooter && <CatNav />}
       {children}
       <Toaster />
       {showHeaderFooter && <Footer />}

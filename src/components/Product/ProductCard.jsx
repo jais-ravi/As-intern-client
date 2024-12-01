@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -48,49 +49,63 @@ export default function ProductCard({ product, isLoading }) {
   const discount = product.discount || 0;
   const roundedDiscount = Math.round(discount);
 
+  const handleCart = (e) => {
+    e.stopPropagation(); // Prevent Link redirection
+    console.log("Added to Cart");
+  };
+
+  const handleBuy = (e) => {
+    e.stopPropagation(); // Prevent Link redirection
+    console.log("Buying Now");
+  };
+
   return (
-    <Card className="bg-white rounded-xl shadow-lg w-60">
-      <CardHeader className="p-0 pb-2">
-        {/* Product Image */}
-        <Image
-          src={imageUrl}
-          alt={productName}
-          className="w-full h-60 object-cover rounded-t-lg"
-          width={200}
-          height={200}
-        />
-      </CardHeader>
-      <CardContent className="pb-0 px-3">
-        <CardTitle className="text-base font-semibold text-gray-800 ">
-          {productName}
-        </CardTitle>
-        <CardDescription className="text-xs text-gray-500 line-clamp-2">
-          {productDescription}
-        </CardDescription>
-        <div className="mb-1 flex gap-1">
-          {/* Price Information */}
-          <p className="text-lg font-bold flex items-center">
-            <IndianRupee size="15" strokeWidth={3} />
-            {sellingPrice}
-          </p>
-          <div className="flex gap-3">
-            {originalPrice > 0 && (
-              <p className="text-gray-500 text-sm font-semibold line-through flex items-center">
-                <IndianRupee size="13" strokeWidth={3} />
-                {originalPrice}
+    <Card className="bg-white rounded-xl shadow-lg w-60 hover:cursor-pointer">
+      <Link href={`/product/${product._id}`} passHref>
+        <div className="cursor-pointer">
+          <CardHeader className="p-0 pb-2">
+            {/* Product Image */}
+            <Image
+              src={imageUrl}
+              alt={productName}
+              className="w-full h-60 object-cover rounded-t-lg"
+              width={200}
+              height={200}
+            />
+          </CardHeader>
+          <CardContent className="pb-0 px-3 space-y-1">
+            <CardTitle className="text-base font-semibold text-gray-800 ">
+              {productName}
+            </CardTitle>
+            <CardDescription className="text-xs text-gray-500 line-clamp-2">
+              {productDescription}
+            </CardDescription>
+            <div className="mb-1 flex gap-1">
+              {/* Price Information */}
+              <p className="text-lg font-bold flex items-center">
+                <IndianRupee size="15" strokeWidth={3} />
+                {sellingPrice}
               </p>
-            )}
-            {discount > 0 && (
-              <Badge className="text-xs">{roundedDiscount}% OFF</Badge>
-            )}
-          </div>
+              <div className="flex gap-3">
+                {originalPrice > 0 && (
+                  <p className="text-gray-500 text-sm font-semibold line-through flex items-center">
+                    <IndianRupee size="13" strokeWidth={3} />
+                    {originalPrice}
+                  </p>
+                )}
+                {discount > 0 && (
+                  <Badge className="text-xs">{roundedDiscount}% OFF</Badge>
+                )}
+              </div>
+            </div>
+          </CardContent>
         </div>
-      </CardContent>
-      <CardFooter className="flex justify-between px-3 pb-3">
-        <Button className="text-white" size="icon">
+      </Link>
+      <CardFooter className="flex justify-between px-3 py-2">
+        <Button className="text-white" size="icon" onClick={handleCart}>
           <ShoppingCart size={20} />
         </Button>
-        <Button variant="outline" className="text-gray-800" >
+        <Button variant="outline" className="text-gray-800" onClick={handleBuy}>
           Buy Now
         </Button>
       </CardFooter>

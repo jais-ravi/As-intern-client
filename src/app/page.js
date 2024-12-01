@@ -10,7 +10,6 @@ import Banner from "@/components/Ad/Banner";
 const page = () => {
   return (
     <div className=" min-h-screen w-full ">
-      <CatNav />
       <Banner/>
       <Products />
     </div>
