@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "../ui/button";
+import { ChevronDown } from "lucide-react";
 
 const CatNav = () => {
 
@@ -84,7 +85,7 @@ const CatNav = () => {
             {CatData.map((category) => (
               <MenubarMenu key={category.name}>
                 <MenubarTrigger className="text-base ">
-                  {category.name}
+                  {category.name} <ChevronDown size={18} />
                 </MenubarTrigger>
                 <MenubarContent
                   align="start"

@@ -21,6 +21,9 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { signInSchema } from "@/schemas/loginSchema";
 import { signIn } from "next-auth/react";
+import DotPattern from "@/components/ui/dot-pattern";
+import { cn } from "@/lib/utils";
+
 
 export default function SignInPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,15 +39,15 @@ export default function SignInPage() {
   });
 
   const onSubmit = async (data) => {
-    setIsSubmitting(true); // Disable button while submitting
+    setIsSubmitting(true); 
 
     const result = await signIn("credentials", {
       redirect: false,
-      email: data.email, // Ensure correct usage of email
+      email: data.email, 
       password: data.password,
     });
 
-    setIsSubmitting(false); // Enable button again
+    setIsSubmitting(false); 
 
     if (result?.error) {
       if (result.error === "CredentialsSignin") {
@@ -71,8 +74,13 @@ export default function SignInPage() {
     }
   };
   return (
-    <div className="h-[100vh] w-full flex justify-center items-center">
-      <Card className=" w-[80%] drop-shadow-2xl">
+    <div className="min-h-screen w-full flex justify-center items-center">
+    <DotPattern
+        className={cn(
+          "[mask-image:radial-gradient(70rem_circle_at_center,white,transparent)]"
+        )}
+      />
+      <Card className=" w-[95%] sm:w-[80%] drop-shadow-2xl">
         <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
           <div className="flex items-center justify-center py-12 px-3">
             <div className="mx-auto grid w-[350px] gap-6">
@@ -92,9 +100,9 @@ export default function SignInPage() {
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>E-mail</FormLabel>
                         <FormControl>
-                          <Input {...field} />
+                          <Input placeholder="E-mail" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -107,7 +115,7 @@ export default function SignInPage() {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input type="password" {...field} />
+                          <Input type="password" placeholder="Password" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

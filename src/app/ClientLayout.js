@@ -8,8 +8,8 @@ import CatNav from "@/components/HeaderFooter/CatNav";
 
 export default function ClientLayout({ children }) {
   const pathname = usePathname();
-  const noHeaderFooterRoutes = ["/sign-in", "/sign-up", "/forgot-password"];
-  const showHeaderFooter = !noHeaderFooterRoutes.includes(pathname);
+  const noHeaderFooterRoutes = ["/sign-in", "/sign-up", "/forgot-password" ,"/verify"];
+  const showHeaderFooter = !noHeaderFooterRoutes.some((route) => pathname.startsWith(route));
 
   return (
     <>

@@ -22,6 +22,8 @@ import { signUpSchema } from "@/schemas/signupSchema";
 import { Card } from "@/components/ui/card";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
+import DotPattern from "@/components/ui/dot-pattern";
+import { cn } from "@/lib/utils";
 
 export default function Page() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,8 +79,13 @@ export default function Page() {
   };
 
   return (
-    <div className="h-[100vh] w-full flex justify-center items-center">
-      <Card className=" w-[80%] drop-shadow-2xl">
+    <div className=" min-h-screen w-full flex justify-center items-center">
+      <DotPattern
+        className={cn(
+          "[mask-image:radial-gradient(70rem_circle_at_center,white,transparent)]"
+        )}
+      />
+      <Card className=" w-[95%] sm:w-[80%] drop-shadow-2xl">
         <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
           <div className="hidden bg-muted lg:block">
             <Image
@@ -90,7 +97,7 @@ export default function Page() {
             />
           </div>
           <div className="flex items-center justify-center py-12">
-            <div className="mx-auto grid w-[350px] gap-6">
+            <div className="mx-auto grid  gap-6 p-2">
               <div className="grid gap-2 text-center">
                 <h1 className="text-3xl font-bold">Signup</h1>
                 <p className="text-balance text-muted-foreground">
@@ -120,9 +127,9 @@ export default function Page() {
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>E-mail</FormLabel>
                         <FormControl>
-                          <Input placeholder="Email" {...field} />
+                          <Input placeholder="E-mail" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
