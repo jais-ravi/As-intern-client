@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import useSWR from "swr"; // Import SWR
 import {
   Card,
   CardContent,
@@ -13,40 +14,25 @@ import CartProductCard from "@/components/Product/CartProductCard";
 import { toast } from "@/components/ui/use-toast";
 
 
-const CartPage = () => {
-  const [cartProducts, setCartProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+const fetchCartData = async () => {
+  const response = await axios.get("/api/cart-products");
+  const cart = response.data.cart;
 
-  const fetchCartData = async () => {
-    try {
-      const response = await axios.get(`/api/cart-products`);
-      const cart = response.data.cart;
 
-      const productDetails = await Promise.all(
-        cart.map(async (item) => {
-          const productResponse = await axios.get(
-            `/api/products/product-details`,
-            { params: { productId: item.productId } }
-          );
-          return { ...productResponse.data.data, quantity: item.quantity };
-        })
-      );
-      setCartProducts(productDetails);
-    } catch (error) {
-      console.error("Error fetching cart data:", error);
-      toast({
-        title: "Error fetching cart",
-        description: "Could not load cart data. Try again later.",
-        variant: "destructive",
+  const productDetails = await Promise.all(
+    cart.map(async (item) => {
+      const productResponse = await axios.get("/api/products/product-details", {
+        params: { productId: item.productId },
       });
-    } finally {
-      setLoading(false);
-    }
-  };
+      return { ...productResponse.data.data, quantity: item.quantity };
+    })
+  );
+  return productDetails;
+};
 
-  useEffect(() => {
-    fetchCartData();
-  }, []);
+const CartPage = () => {
+  // Use SWR to fetch and cache cart data
+  const { data: cartProducts, error, mutate } = useSWR("/api/cart-products", fetchCartData);
 
   const handleRemove = async (productId) => {
     try {
@@ -54,9 +40,8 @@ const CartPage = () => {
         data: { productId },
       });
       if (response.data.success) {
-        setCartProducts((prevCart) =>
-          prevCart.filter((product) => product._id !== productId)
-        );
+        // Mutate the cache to update cartProducts without refetching
+        mutate((prevCart) => prevCart.filter((product) => product._id !== productId), false);
         toast({
           title: "Product removed",
           description: "The product was removed from your cart.",
@@ -81,12 +66,12 @@ const CartPage = () => {
       });
 
       if (response.data.success) {
-        setCartProducts((prevCart) =>
+        // Mutate the cache to update quantity without refetching
+        mutate((prevCart) =>
           prevCart.map((product) =>
-            product._id === productId
-              ? { ...product, quantity: newQuantity }
-              : product
-          )
+            product._id === productId ? { ...product, quantity: newQuantity } : product
+          ),
+          false
         );
         toast({
           title: "Quantity updated",
@@ -104,7 +89,11 @@ const CartPage = () => {
     }
   };
 
-  if (loading) {
+  if (error) {
+    return <p>Error loading cart data. Please try again later.</p>;
+  }
+
+  if (!cartProducts) {
     return <p>Loading...</p>;
   }
 
