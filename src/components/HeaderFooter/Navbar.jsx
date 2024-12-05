@@ -32,10 +32,10 @@ const Navbar = () => {
         variant: "destructive",
       });
       setTimeout(() => {
-        router.replace("/sign-in");
+        router.push("/sign-in");
       }, 1000);
     } else {
-      router.replace(link);
+      router.push(link);
     }
   };
 
@@ -43,7 +43,7 @@ const Navbar = () => {
     {
       icon: <RiShoppingCart2Line size={20} />,
       text: "Cart",
-      link: "",
+      link: "/cart",
     },
   ];
 
@@ -71,11 +71,11 @@ const Navbar = () => {
                 <Button variant="ghost" className="space-x-2">
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user.avatar} alt={user.username} />
-                    <AvatarFallback className="rounded-lg">
+                    <AvatarFallback className="rounded-lg capitalize">
                       {`${user.username[0]}`}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="hidden sm:inline truncate font-semibold">
+                  <span className="hidden sm:inline truncate font-semibold capitalize">
                     {user.username}
                   </span>
                   <ChevronDown className="sm:inline size-4" />

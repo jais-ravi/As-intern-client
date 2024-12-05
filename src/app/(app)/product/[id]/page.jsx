@@ -93,7 +93,25 @@ const ProductDetailsPage = () => {
       </div>
     );
   }
-
+  const handleCart = async () => {
+    try {
+      const response = await axios.post(`/api/cart`, {
+        productId: product._id,
+      });
+      if (response.data.success) {
+        toast({ title: "Success", description: "Product added to cart!" });
+      } else {
+        throw new Error("Failed to add to cart");
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast({
+        title: "Error",
+        description: "Could not add to cart.",
+        variant: "destructive",
+      });
+    }
+  };
   const images = product.productImages || [];
   const fallbackImage = "/placeholder-image.png";
 
@@ -172,6 +190,7 @@ const ProductDetailsPage = () => {
             <Button
               variant="secondary"
               className="border-2 border-zinc-600 text-lg"
+              onClick={handleCart}
             >
               Add to Cart
             </Button>

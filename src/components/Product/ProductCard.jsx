@@ -13,6 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ShoppingCart, IndianRupee } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import axios from "axios";
+import { toast } from "../ui/use-toast";
 
 export default function ProductCard({ product, isLoading }) {
   if (isLoading) {
@@ -49,13 +51,27 @@ export default function ProductCard({ product, isLoading }) {
   const discount = product.discount || 0;
   const roundedDiscount = Math.round(discount);
 
-  const handleCart = (e) => {
-    e.stopPropagation(); // Prevent Link redirection
-    console.log("Added to Cart");
+  const handleCart = async () => {
+    try {
+      const response = await axios.post(`/api/cart`, {
+        productId: product._id,
+      });
+      if (response.data.success) {
+        toast({ title: "Success", description: "Product added to cart!" });
+      } else {
+        throw new Error("Failed to add to cart");
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast({
+        title: "Error",
+        description: "Could not add to cart.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleBuy = (e) => {
-    e.stopPropagation(); // Prevent Link redirection
+  const handleBuy = () => {
     console.log("Buying Now");
   };
 
@@ -64,7 +80,6 @@ export default function ProductCard({ product, isLoading }) {
       <Link href={`/product/${product._id}`} passHref>
         <div className="cursor-pointer">
           <CardHeader className="p-0 pb-2">
-            {/* Product Image */}
             <Image
               src={imageUrl}
               alt={productName}
@@ -81,7 +96,6 @@ export default function ProductCard({ product, isLoading }) {
               {productDescription}
             </CardDescription>
             <div className="mb-1 flex gap-1">
-              {/* Price Information */}
               <p className="text-lg font-bold flex items-center">
                 <IndianRupee size="15" strokeWidth={3} />
                 {sellingPrice}
@@ -93,7 +107,7 @@ export default function ProductCard({ product, isLoading }) {
                     {originalPrice}
                   </p>
                 )}
-                {discount > 0 && (
+                {roundedDiscount > 0 && (
                   <Badge className="text-xs">{roundedDiscount}% OFF</Badge>
                 )}
               </div>

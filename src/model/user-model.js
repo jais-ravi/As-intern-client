@@ -1,6 +1,20 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+const CartItemSchema = new mongoose.Schema({
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+    min: [1, "Quantity must be at least 1"],
+    default: 1,
+  },
+});
+
 const userSchema = mongoose.Schema(
   {
     username: {
@@ -30,7 +44,7 @@ const userSchema = mongoose.Schema(
       default: () => new Date(Date.now() + 10 * 60 * 1000), // Default 10 minutes from now
     },
     cart: {
-      type: Array,
+      type: [CartItemSchema], // Array of cart items
       default: [],
     },
     orders: {
@@ -49,13 +63,13 @@ const userSchema = mongoose.Schema(
 );
 
 // Pre-save hook for password hashing
-userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-  }
-  next();
-});
+// userSchema.pre("save", async function (next) {
+//   if (this.isModified("password")) {
+//     const salt = await bcrypt.genSalt(10);
+//     this.password = await bcrypt.hash(this.password, salt);
+//   }
+//   next();
+// });
 
 const UserModel = mongoose.models.User || mongoose.model("User", userSchema);
 
