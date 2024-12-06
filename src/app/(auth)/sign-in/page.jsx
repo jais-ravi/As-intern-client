@@ -24,7 +24,6 @@ import { signIn } from "next-auth/react";
 import DotPattern from "@/components/ui/dot-pattern";
 import { cn } from "@/lib/utils";
 
-
 export default function SignInPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -39,15 +38,15 @@ export default function SignInPage() {
   });
 
   const onSubmit = async (data) => {
-    setIsSubmitting(true); 
+    setIsSubmitting(true);
 
     const result = await signIn("credentials", {
       redirect: false,
-      email: data.email, 
+      email: data.email,
       password: data.password,
     });
 
-    setIsSubmitting(false); 
+    setIsSubmitting(false);
 
     if (result?.error) {
       if (result.error === "CredentialsSignin") {
@@ -75,7 +74,7 @@ export default function SignInPage() {
   };
   return (
     <div className="min-h-screen w-full flex justify-center items-center">
-    <DotPattern
+      <DotPattern
         className={cn(
           "[mask-image:radial-gradient(70rem_circle_at_center,white,transparent)]"
         )}
@@ -93,8 +92,8 @@ export default function SignInPage() {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-6"
                 >
+                <div className=" space-y-6">
                   <FormField
                     name="email"
                     control={form.control}
@@ -115,12 +114,22 @@ export default function SignInPage() {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="Password" {...field} />
+                          <Input
+                            type="password"
+                            placeholder="Password"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+                  </div>
+                  <div className="flex justify-end py-3">
+                    <Link href="/forgot-password" className="text-sm underline">
+                      Forgot Password?
+                    </Link>
+                  </div>
                   <Button
                     className="w-full"
                     type="submit"
