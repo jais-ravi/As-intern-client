@@ -1,6 +1,47 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+const AddressSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, "Name is required"],
+    trim: true,
+  },
+  mobileNumber: {
+    type: String,
+    required: [true, "Mobile number is required"],
+    match: [/^\d{10}$/, "Please provide a valid 10-digit mobile number"],
+  },
+  addressLine1: {
+    type: String,
+    required: [true, "Address Line 1 is required"],
+    trim: true,
+  },
+  addressLine2: {
+    type: String,
+    trim: true,
+  },
+  landmark: {
+    type: String,
+    trim: true,
+  },
+  city: {
+    type: String,
+    required: [true, "City is required"],
+    trim: true,
+  },
+  postalCode: {
+    type: String,
+    required: [true, "Postal code is required"],
+    match: [/^\d{6}$/, "Please provide a valid 6-digit postal code"],
+  },
+  state: {
+    type: String,
+    required: [true, "State is required"],
+    trim: true,
+  },
+}, { _id: true }); 
+
 const CartItemSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -15,7 +56,7 @@ const CartItemSchema = new mongoose.Schema({
   },
 });
 
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -40,11 +81,11 @@ const userSchema = mongoose.Schema(
       default: false,
     },
     verifyCodeExpiry: {
-      type: Date, // Store as a Date object
-      default: () => new Date(Date.now() + 10 * 60 * 1000), // Default 10 minutes from now
+      type: Date, 
+      default: () => new Date(Date.now() + 10 * 60 * 1000), 
     },
     cart: {
-      type: [CartItemSchema], // Array of cart items
+      type: [CartItemSchema],                
       default: [],
     },
     orders: {
@@ -52,24 +93,19 @@ const userSchema = mongoose.Schema(
       default: [],
     },
     contact: {
-      type: String, // Store as a string for better validation
-      match: [/^\d{10}$/, "Please provide a valid contact number"], // Example validation for 10-digit numbers
+      type: String, 
+      match: [/^\d{10}$/, "Please provide a valid contact number"], 
     },
     picture: {
       type: String,
     },
+    addresses: {
+      type: [AddressSchema], // Array of addresses
+      default: [], // Default to an empty array
+    },
   },
-  { collection: "myusers", timestamps: true } // Timestamps to track creation and updates
+  { collection: "myusers", timestamps: true } 
 );
-
-// Pre-save hook for password hashing
-// userSchema.pre("save", async function (next) {
-//   if (this.isModified("password")) {
-//     const salt = await bcrypt.genSalt(10);
-//     this.password = await bcrypt.hash(this.password, salt);
-//   }
-//   next();
-// });
 
 const UserModel = mongoose.models.User || mongoose.model("User", userSchema);
 

@@ -60,7 +60,6 @@ export const DELETE = async (req) => {
 
   try {
     const { productId } = await req.json();
-    console.log(`Removing product with ID: ${productId} from cart`);
 
     const updatedUser = await UserModel.findOneAndUpdate(
       { _id: userId },
