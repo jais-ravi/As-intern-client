@@ -3,6 +3,7 @@ const UserModel = require("@/model/user-model");
 const { NextRequest, NextResponse } = require("next/server");
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
+
 // export const PATCH = async (req) => {
 //   const session = await getServerSession({ req, ...authOptions });
 //   if (!session) {
@@ -48,7 +49,6 @@ import { authOptions } from "../../auth/[...nextauth]/options";
 //   }
 // };
 
-
 export const DELETE = async (req) => {
   const session = await getServerSession({ req, ...authOptions });
 
@@ -84,7 +84,11 @@ export const DELETE = async (req) => {
     }
 
     return NextResponse.json(
-      { success: true, message: "Address deleted", addresses: updatedUser.addresses },
+      {
+        success: true,
+        message: "Address deleted",
+        addresses: updatedUser.addresses,
+      },
       { status: 200 }
     );
   } catch (error) {
@@ -96,3 +100,47 @@ export const DELETE = async (req) => {
   }
 };
 
+export const PATCH = async (req) => {
+  // Get session from the request to check if the user is authenticated
+  const session = await getServerSession({ req, ...authOptions });
+
+  // Check if user is authenticated
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const userId = session.user._id;
+  if (!userId) {
+    return NextResponse.json({ message: "User ID not found" }, { status: 400 });
+  }
+
+  // Connect to the database
+  await dbConnect();
+
+  try {
+    // Parse the request body to get the address ID
+    const { addressId } = await req.json();
+
+    if (!addressId) {
+      return NextResponse.json({ message: "Address ID is required" }, { status: 400 });
+    }
+
+    // Find the user by their ID and update the defaultAddress field
+    const user = await UserModel.findByIdAndUpdate(
+      userId, 
+      { defaultAddress: addressId },  // Update the defaultAddress field
+      { new: true }  // Return the updated user document
+    );
+
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
+    // Return a success response
+    return NextResponse.json({ success: true, message: "Default address updated", user }, { status: 200 });
+    
+  } catch (error) {
+    console.error("Error setting default address:", error);
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+  }
+};

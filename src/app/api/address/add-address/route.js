@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import UserModel from "@/model/user-model";
+import { Types } from "mongoose"; // Import for generating ObjectId
 const dbConnect = require("@/lib/dbConnect");
 
 export async function POST(req) {
@@ -52,26 +53,34 @@ export async function POST(req) {
       );
     }
 
-    // Add the new address
+    // Generate a new ObjectId for the address
+    const newAddressId = new Types.ObjectId();
+
     const newAddress = {
+      _id: newAddressId, // Assign the pre-generated ID
       name,
       mobileNumber,
       addressLine1,
-      addressLine2: addressLine2 || "", 
-      landmark: landmark || "", 
+      addressLine2: addressLine2 || "",
+      landmark: landmark || "",
       city,
       postalCode,
       state,
     };
 
-    user.addresses.push(newAddress); 
+    user.addresses.push(newAddress);
     await user.save();
+
+    // Retrieve the newly created address by its _id
+    const createdAddress = user.addresses.find(
+      (address) => address._id.toString() === newAddressId.toString()
+    );
 
     return NextResponse.json(
       {
         success: true,
         message: "Address added successfully",
-        addresses: user.addresses,
+        address: createdAddress, // Return the new address
       },
       { status: 200 }
     );

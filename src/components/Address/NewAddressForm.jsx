@@ -1,13 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import axios from "axios";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "../ui/use-toast";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -27,15 +23,54 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { newAddressSchema } from "@/schemas/newAddressSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import axios from "axios";
-import { toast } from "../ui/use-toast";
+import { Loader2 } from "lucide-react";
+
+const states = [
+  { id: "AP", name: "Andhra Pradesh" },
+  { id: "AR", name: "Arunachal Pradesh" },
+  { id: "AS", name: "Assam" },
+  { id: "BR", name: "Bihar" },
+  { id: "CG", name: "Chhattisgarh" },
+  { id: "GA", name: "Goa" },
+  { id: "GJ", name: "Gujarat" },
+  { id: "HR", name: "Haryana" },
+  { id: "HP", name: "Himachal Pradesh" },
+  { id: "JH", name: "Jharkhand" },
+  { id: "KA", name: "Karnataka" },
+  { id: "KL", name: "Kerala" },
+  { id: "MP", name: "Madhya Pradesh" },
+  { id: "MH", name: "Maharashtra" },
+  { id: "MN", name: "Manipur" },
+  { id: "ML", name: "Meghalaya" },
+  { id: "MZ", name: "Mizoram" },
+  { id: "NL", name: "Nagaland" },
+  { id: "OD", name: "Odisha" },
+  { id: "PB", name: "Punjab" },
+  { id: "RJ", name: "Rajasthan" },
+  { id: "SK", name: "Sikkim" },
+  { id: "TN", name: "Tamil Nadu" },
+  { id: "TG", name: "Telangana" },
+  { id: "TR", name: "Tripura" },
+  { id: "UP", name: "Uttar Pradesh" },
+  { id: "UK", name: "Uttarakhand" },
+  { id: "WB", name: "West Bengal" },
+];
 
 const NewAddressForm = ({ onNewAddress }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [locationData, setLocationData] = useState({
+    latitude: null,
+    longitude: null,
+  });
 
   const form = useForm({
     resolver: zodResolver(newAddressSchema),
@@ -51,50 +86,66 @@ const NewAddressForm = ({ onNewAddress }) => {
     },
   });
 
-  const states = [
-    { id: "AP", name: "Andhra Pradesh" },
-    { id: "AR", name: "Arunachal Pradesh" },
-    { id: "AS", name: "Assam" },
-    { id: "BR", name: "Bihar" },
-    { id: "CG", name: "Chhattisgarh" },
-    { id: "GA", name: "Goa" },
-    { id: "GJ", name: "Gujarat" },
-    { id: "HR", name: "Haryana" },
-    { id: "HP", name: "Himachal Pradesh" },
-    { id: "JH", name: "Jharkhand" },
-    { id: "KA", name: "Karnataka" },
-    { id: "KL", name: "Kerala" },
-    { id: "MP", name: "Madhya Pradesh" },
-    { id: "MH", name: "Maharashtra" },
-    { id: "MN", name: "Manipur" },
-    { id: "ML", name: "Meghalaya" },
-    { id: "MZ", name: "Mizoram" },
-    { id: "NL", name: "Nagaland" },
-    { id: "OD", name: "Odisha" },
-    { id: "PB", name: "Punjab" },
-    { id: "RJ", name: "Rajasthan" },
-    { id: "SK", name: "Sikkim" },
-    { id: "TN", name: "Tamil Nadu" },
-    { id: "TG", name: "Telangana" },
-    { id: "TR", name: "Tripura" },
-    { id: "UP", name: "Uttar Pradesh" },
-    { id: "UK", name: "Uttarakhand" },
-    { id: "WB", name: "West Bengal" },
-  ];
+  const fetchAddress = async (latitude, longitude) => {
+    const url = `https://us1.locationiq.com/v1/reverse.php?key=${process.env.NEXT_PUBLIC_LOCATIONIQ_API_ID}&lat=${latitude}&lon=${longitude}&format=json`;
+
+    try {
+      setIsLoading(true);
+      const response = await axios.get(url);
+      const location = response.data;
+      form.setValue(
+        "addressLine1",
+        `${location.address.neighbourhood || ""}${
+          location.address.neighbourhood &&
+          location.address.city &&
+          location.address.state_district
+            ? ", "
+            : ""
+        }${location.address.city || ""}${location.address.city && location.address.state_district ? ", " : ""}${location.address.state_district || ""}`
+      );
+      form.setValue("city", location.address.city || " ");
+      form.setValue("state", location.address.state);
+      form.setValue("postalCode", location.address.postcode);
+    } catch (err) {
+      console.error("Error fetching address:", err);
+      setError("Could not fetch the address. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLocationData({ latitude, longitude });
+          fetchAddress(latitude, longitude);
+        },
+        (err) => {
+          console.error("Geolocation error:", err);
+          setError("Unable to retrieve your location.");
+        }
+      );
+    } else {
+      setError("Geolocation is not supported by your browser.");
+    }
+  };
 
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
       const response = await axios.post("/api/address/add-address", data);
-
       if (response.data.success) {
+        const newAddress = response.data.address;
         toast({
           title: "Success",
           description: response.data.message,
         });
 
         // Pass the new address to the parent component
-        onNewAddress(data);
+        onNewAddress(newAddress);
+        form.reset();
       }
 
       setIsLoading(false);
@@ -130,7 +181,6 @@ const NewAddressForm = ({ onNewAddress }) => {
       <DialogContent className="max-h-[90%] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>New Address</DialogTitle>
-          <DialogDescription></DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -163,13 +213,18 @@ const NewAddressForm = ({ onNewAddress }) => {
               />
               <Button
                 className="w-full"
-                type="button" 
-                onClick={() => {
-                  // Handle current location logic here
-                  console.log("Using current location");
-                }}
+                type="button"
+                onClick={handleGetLocation}
+                disabled={isLoading}
               >
-                Use current location
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait...
+                  </>
+                ) : (
+                  "Use current location"
+                )}
               </Button>
 
               <FormField
@@ -179,7 +234,10 @@ const NewAddressForm = ({ onNewAddress }) => {
                   <FormItem>
                     <FormLabel>Address Line 1</FormLabel>
                     <FormControl>
-                      <Input placeholder="Flat, House no., Building, Company, Apartment" {...field} />
+                      <Input
+                        placeholder="Flat, House no., Building, Company, Apartment"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -192,7 +250,10 @@ const NewAddressForm = ({ onNewAddress }) => {
                   <FormItem>
                     <FormLabel>Address Line 2 (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Area, Street, Sector, Village" {...field} />
+                      <Input
+                        placeholder="Area, Street, Sector, Village"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -237,41 +298,46 @@ const NewAddressForm = ({ onNewAddress }) => {
                   </FormItem>
                 )}
               />
+
               <FormField
-                  name="state"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>State</FormLabel>
-                      <FormControl>
-                      <div {...field}>
-                        <Select >
-                          <SelectTrigger id="state">
-                            <SelectValue placeholder="Select State" />
-                          </SelectTrigger>
-                          <SelectContent position="popper">
-                            <SelectGroup>
-                              <SelectLabel>State</SelectLabel>
-                              {states.map((state) => (
-                                <SelectItem key={state.id} value={state.name}>
-                                  {state.name}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                name="state"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>State</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select State" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {states.map((state) => (
+                              <SelectItem key={state.id} value={state.name}>
+                                {state.name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-
-            {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
-
-            <Button className="w-full mt-4" type="submit" disabled={isLoading}>
-              {isLoading ? "Submitting..." : "Add Address"}
+            <Button className="w-full mt-6" type="submit" disabled={isLoading}>
+              {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait...
+                  </>
+                ) : (
+                  "Submit"
+                )}
             </Button>
           </form>
         </Form>
