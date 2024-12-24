@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import ProductCard from "@/components/Product/ProductCard";
 import { useSearchParams } from "next/navigation";
 import SearchProductCard from "@/components/Product/SearchProductCard";
 
-const page = () => {
+const Page = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
   const [searchResults, setSearchResults] = useState([]);
@@ -58,4 +57,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
