@@ -84,8 +84,8 @@ const CatNav = () => {
           <Menubar className="flex flex-wrap space-x-0" >
             {CatData.map((category) => (
               <MenubarMenu key={category.name}>
-                <MenubarTrigger className="text-base ">
-                  {category.name} <ChevronDown size={18} />
+                <MenubarTrigger className="text-xs sm:text-base">
+                  {category.name} <ChevronDown size={18} className="hidden sm:block" />
                 </MenubarTrigger>
                 <MenubarContent
                   align="start"
@@ -94,7 +94,7 @@ const CatNav = () => {
                   {category.links.map((link) => (
                     <MenubarItem key={link.url} >
                       <Link href={link.url} className="text-sm hover:underline ">
-                        <Button className=" w-48 flex justify-start" variant="ghost">{link.name}</Button>
+                        <Button className=" w-40 sm:w-48 flex justify-start text-xs sm:text-base" variant="ghost">{link.name}</Button>
                       </Link>
                     </MenubarItem>
                   ))}
