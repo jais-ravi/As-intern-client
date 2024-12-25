@@ -17,10 +17,13 @@ export async function middleware(request) {
   if (!token && url.pathname.startsWith("/cart")) {
     return NextResponse.redirect(new URL("/sign-in", request.url)); 
   }
+  if (!token && url.pathname.startsWith("/address")) {
+    return NextResponse.redirect(new URL("/sign-in", request.url)); 
+  }
 
   return NextResponse.next(); 
 }
 
 export const config = {
-  matcher: ["/sign-in", "/sign-up", "/", "/cart/:path*"],
+  matcher: ["/sign-in", "/sign-up", "/", "/cart/:path*","/address/:path*"],
 };

@@ -97,7 +97,7 @@ const Navbar = () => {
                 <Button variant="secondary" className="space-x-2  w-10 sm:w-full" >
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user.avatar} alt={user.username} />
-                    <AvatarFallback className="rounded-lg capitalize">
+                    <AvatarFallback className="rounded-lg capitalize border border-zinc-900 ">
                       {`${user.username[0]}`}
                     </AvatarFallback>
                   </Avatar>
