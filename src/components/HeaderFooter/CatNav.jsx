@@ -84,7 +84,7 @@ const CatNav = () => {
           <Menubar className="flex flex-wrap space-x-0" >
             {CatData.map((category) => (
               <MenubarMenu key={category.name}>
-                <MenubarTrigger className="text-xs sm:text-base">
+                <MenubarTrigger className="text-sm font-semibold sm:text-base">
                   {category.name} <ChevronDown size={18} className="hidden sm:block" />
                 </MenubarTrigger>
                 <MenubarContent

@@ -73,11 +73,11 @@ const Navbar = () => {
               placeholder="Search items..."
               value={query}
               onChange={(e) => setQuery(e.target.value)} // Update query on input change
-              className=" border-zinc-900 "
+              className=" border-2 border-zinc-900 "
             />
             <Button
               type="submit"
-              className=" rounded-md rounded-l-none  absolute right-0 bg-background hover:bg-background  border border-zinc-900"
+              className=" rounded-md rounded-l-none  absolute right-0 bg-background hover:bg-background  border-2 border-zinc-900"
               size="icon"
             >
               {loading ? (
@@ -94,7 +94,7 @@ const Navbar = () => {
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="space-x-2">
+                <Button variant="secondary" className="space-x-2  w-10 sm:w-full" >
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user.avatar} alt={user.username} />
                     <AvatarFallback className="rounded-lg capitalize">
@@ -104,7 +104,7 @@ const Navbar = () => {
                   <span className="hidden sm:inline truncate font-semibold capitalize">
                     {user.username}
                   </span>
-                  <ChevronDown className="sm:inline size-4" />
+                  <ChevronDown className=" size-4 hidden sm:block" />
                 </Button>
               </DropdownMenuTrigger>
               <Profilebtn user={user} />
@@ -114,7 +114,7 @@ const Navbar = () => {
               href="/sign-in"
               className="gap-3 flex items-center justify-center"
             >
-              <Button variant="ghost" className="space-x-2">
+              <Button variant="secondary" className="space-x-2 w-10 px-0 py-0 sm:px-4 sm:py-2 sm:w-full">
                 <CgProfile size={20} />
                 <h1 className="hidden sm:inline text-sm">Login/Sign-up</h1>
               </Button>
@@ -122,9 +122,9 @@ const Navbar = () => {
           )}
 
           <Button
-            variant="ghost"
+            variant="secondary"
             onClick={() => handleLinkClick("/cart")}
-            className="space-x-1"
+            className="space-x-1 w-10 px-0 py-0 sm:px-4 sm:py-2 sm:w-full"
           >
             <RiShoppingCart2Line size={20} />
             <h1 className="hidden sm:inline text-sm">Cart</h1>
@@ -140,11 +140,11 @@ const Navbar = () => {
             placeholder="Search items..."
             value={query}
             onChange={(e) => setQuery(e.target.value)} // Update query on input change
-            className=" border-zinc-900 "
+            className=" border-2 border-zinc-900 "
           />
           <Button
             type="submit"
-            className=" rounded-md rounded-l-none  absolute right-0  bg-background hover:bg-background  border border-zinc-900"
+            className=" rounded-md rounded-l-none  absolute right-0 bg-background hover:bg-background  border-2 border-zinc-900"
             size="icon"
           >
             {loading ? (

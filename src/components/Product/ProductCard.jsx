@@ -83,7 +83,7 @@ export default function ProductCard({ product, isLoading }) {
             <Image
               src={imageUrl}
               alt={productName}
-              className="w-full h-60 object-cover rounded-t-lg"
+              className="w-60 h-60 object-cover rounded-t-lg"
               width={200}
               height={200}
             />

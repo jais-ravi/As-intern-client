@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/context/AuthProvider";
 import ClientLayout from "./ClientLayout";
-
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +19,9 @@ export default function RootLayout({ children }) {
       </head>
       <body className={inter.className}>
         <AuthProvider>
-          <ClientLayout>{children}</ClientLayout>
+          <Suspense>
+            <ClientLayout>{children}</ClientLayout>
+          </Suspense>
         </AuthProvider>
       </body>
     </html>
